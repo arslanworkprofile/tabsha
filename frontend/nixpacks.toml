@@ -8,7 +8,7 @@ nixPkgs = ["nodejs_20"]
 cmds = ["npm install"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["npm run build", "npm install -g serve"]
 
 [start]
-cmd = "node dist/index.js"
+cmd = "serve -s build -l 3000"
