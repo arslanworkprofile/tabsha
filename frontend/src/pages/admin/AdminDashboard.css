@@ -1,0 +1,29 @@
+.admin-quick-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--admin-border);
+  text-decoration: none;
+  color: var(--admin-text);
+  font-size: 13px;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.admin-quick-link:hover {
+  border-color: var(--admin-accent);
+  background: var(--admin-accent-bg);
+  color: var(--admin-text);
+}
+
+.admin-quick-link__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

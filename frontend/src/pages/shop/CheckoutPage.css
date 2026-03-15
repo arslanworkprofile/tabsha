@@ -1,0 +1,51 @@
+.co-title{font-size:32px;font-weight:400;letter-spacing:-.02em;margin-bottom:28px}
+.co-stepper{display:flex;align-items:center;margin-bottom:36px}
+.co-step{display:flex;flex-direction:column;align-items:center;gap:7px;flex-shrink:0}
+.co-step-dot{width:38px;height:38px;border-radius:50%;border:2px solid var(--g3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--g4);transition:var(--t)}
+.co-step.active .co-step-dot{border-color:var(--gold);color:var(--gold)}
+.co-step.done .co-step-dot{background:var(--gold);border-color:var(--gold);color:var(--white)}
+.co-step>span{font-size:11px;font-weight:500;color:var(--g4);text-transform:uppercase;letter-spacing:.07em}
+.co-step.active>span,.co-step.done>span{color:var(--black)}
+.co-step-line{flex:1;height:2px;background:var(--g2);margin:0 8px;margin-bottom:22px;transition:background .3s}
+.co-step-line.done{background:var(--gold)}
+.co-layout{display:grid;grid-template-columns:1fr 340px;gap:36px;align-items:start}
+.co-section-title{font-size:20px;font-weight:500;margin-bottom:20px}
+.co-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.co-btn{width:100%;padding:14px!important;font-size:12px!important;justify-content:center}
+
+/* Payment methods */
+.co-payments{display:flex;flex-direction:column;gap:10px}
+.co-payment{display:flex;align-items:center;gap:16px;padding:14px 18px;border:1.5px solid var(--g2);border-radius:var(--r2);cursor:pointer;transition:var(--t)}
+.co-payment.active{border-color:var(--gold);background:#fdf8ec}
+.co-payment:hover{border-color:var(--gold)}
+.co-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--g3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--t)}
+.co-payment.active .co-radio{border-color:var(--gold-d)}
+.co-radio-dot{width:9px;height:9px;border-radius:50%;background:var(--gold-d)}
+.co-payment strong{display:block;font-size:14px;font-weight:600}
+.co-payment span{font-size:12px;color:var(--g4)}
+
+/* Review */
+.co-review-blocks{display:flex;flex-direction:column;gap:12px}
+.co-review-block{padding:14px 18px;border:1px solid var(--g2);border-radius:var(--r2)}
+.co-review-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--g4);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.co-review-block p{font-size:13px;color:var(--g5);line-height:1.6}
+.co-edit-btn{font-size:12px;color:var(--gold-d);cursor:pointer;background:none;border:none;font-family:var(--sans);text-decoration:underline}
+
+/* Summary */
+.co-summary{position:sticky;top:90px;background:var(--white);border:1px solid var(--g2);border-radius:var(--r2);padding:22px}
+.co-summary h3{font-size:15px;font-weight:600;padding-bottom:14px;border-bottom:1px solid var(--g2);margin-bottom:16px}
+.co-summary-items{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+.co-summary-item{display:flex;align-items:center;gap:12px}
+.co-summary-img{position:relative;width:50px;height:62px;border-radius:var(--r);overflow:hidden;background:var(--g1);flex-shrink:0}
+.co-summary-img img{width:100%;height:100%;object-fit:cover}
+.co-summary-img span{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--black);color:var(--white);border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.co-summary-info{flex:1}
+.co-summary-info strong{display:block;font-size:13px;font-weight:500;line-height:1.3}
+.co-summary-info small{font-size:11px;color:var(--g4)}
+.co-summary-price{font-size:13px;font-weight:600;flex-shrink:0}
+.co-summary-totals{border-top:1px solid var(--g2);padding-top:14px;display:flex;flex-direction:column;gap:9px}
+.co-summary-totals>div{display:flex;justify-content:space-between;font-size:13px;color:var(--g5)}
+.co-summary-total{font-size:16px;font-weight:700;color:var(--black);padding-top:10px;border-top:1px solid var(--g2)}
+
+@media(max-width:900px){.co-layout{grid-template-columns:1fr}.co-summary{position:static}}
+@media(max-width:480px){.co-grid-2{grid-template-columns:1fr}.co-stepper .co-step>span{display:none}}
