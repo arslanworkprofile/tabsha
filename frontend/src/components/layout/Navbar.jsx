@@ -126,7 +126,7 @@ export default function Navbar() {
                 aria-label="Account"
               >
                 {user ? (
-                  <span className="nb-avatar">{user.name.charAt(0).toUpperCase()}</span>
+                  <span className="nb-avatar">{user?.name?.charAt(0)?.toUpperCase() || 'U'}</span>
                 ) : (
                   <FiUser size={19} />
                 )}
@@ -135,12 +135,12 @@ export default function Navbar() {
               {userOpen && user && (
                 <div className="nb-dropdown">
                   <div className="nb-dropdown-head">
-                    <strong>{user.name}</strong>
-                    <span>{user.email}</span>
+                    <strong>{user?.name || 'User'}</strong>
+                    <span>{user?.email || ''}</span>
                   </div>
                   <Link to="/profile" className="nb-dropdown-item"><FiSettings size={14} /> Profile</Link>
                   <Link to="/my-orders" className="nb-dropdown-item"><FiPackage size={14} /> My Orders</Link>
-                  {user.role === 'admin' && (
+                  {user?.role === 'admin' && (
                     <Link to="/admin" className="nb-dropdown-item nb-dropdown-item--gold">
                       <FiSettings size={14} /> Admin Panel
                     </Link>
@@ -176,9 +176,9 @@ export default function Navbar() {
         <div className="nb-drawer-foot">
           {user ? (
             <>
-              <Link to="/profile" className="nb-drawer-link"><FiUser size={14} /> {user.name}</Link>
+              <Link to="/profile" className="nb-drawer-link"><FiUser size={14} /> {user?.name || 'Profile'}</Link>
               <Link to="/my-orders" className="nb-drawer-link"><FiPackage size={14} /> My Orders</Link>
-              {user.role === 'admin' && <Link to="/admin" className="nb-drawer-link">Admin Panel</Link>}
+              {user?.role === 'admin' && <Link to="/admin" className="nb-drawer-link">Admin Panel</Link>}
               <button className="nb-drawer-link nb-drawer-link--red" onClick={handleLogout}><FiLogOut size={14} /> Logout</button>
             </>
           ) : (

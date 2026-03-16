@@ -55,6 +55,16 @@ export const useAuthStore = create(
     {
       name: 'tabsha-auth',
       partialize: (s) => ({ user: s.user, token: s.token }),
+      merge: (persistedState, currentState) => {
+        const user = persistedState?.user;
+        // Reject corrupt user objects that don't have a name
+        const safeUser = user && typeof user === 'object' && user.name ? user : null;
+        return {
+          ...currentState,
+          token: persistedState?.token || null,
+          user: safeUser,
+        };
+      },
     }
   )
 );
