@@ -1,24 +1,30 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
-const User = require('./models/User');
 
 async function fix() {
   const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/tabsha';
   await mongoose.connect(uri);
-  console.log('✅ Connected to MongoDB');
+  console.log('✅ Connected');
 
-  // Force update admin role using $set to bypass any hooks
-  const result = await User.collection.updateOne(
+  const db = mongoose.connection.db;
+  
+  // Direct MongoDB collection update - bypasses all Mongoose hooks
+  const result = await db.collection('users').updateOne(
     { email: 'admin@tabsha.pk' },
     { $set: { role: 'admin', isActive: true } }
   );
 
-  if (result.matchedCount === 0) {
-    // User doesn't exist - create with bcrypt manually
+  console.log(`Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}`);
+
+  // Verify
+  const admin = await db.collection('users').findOne({ email: 'admin@tabsha.pk' });
+  
+  if (!admin) {
+    // Create admin from scratch
     const bcrypt = require('bcryptjs');
     const hash = await bcrypt.hash('admin123', 12);
-    await User.collection.insertOne({
+    await db.collection('users').insertOne({
       name: 'Tabsha Admin',
       email: 'admin@tabsha.pk',
       password: hash,
@@ -27,28 +33,27 @@ async function fix() {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    console.log('✅ Admin user CREATED');
+    console.log('✅ Admin CREATED from scratch');
   } else {
-    console.log(`✅ Admin role FIXED (matched: ${result.matchedCount}, modified: ${result.modifiedCount})`);
+    console.log(`✅ Role is now: ${admin.role}`);
+    if (admin.role !== 'admin') {
+      console.log('❌ Still not admin - forcing update...');
+      await db.collection('users').updateOne(
+        { email: 'admin@tabsha.pk' },
+        { $set: { role: 'admin' } }
+      );
+    }
   }
 
-  // Verify the fix
-  const admin = await User.collection.findOne({ email: 'admin@tabsha.pk' });
-  console.log('');
-  console.log('=== VERIFICATION ===');
-  console.log(`Email:  ${admin.email}`);
-  console.log(`Role:   ${admin.role}`);
-  console.log(`Active: ${admin.isActive}`);
-  console.log('');
-
-  if (admin.role === 'admin') {
-    console.log('🎉 SUCCESS! Login with:');
-    console.log('   admin@tabsha.pk / admin123');
-  } else {
-    console.log('❌ FAILED - role is still:', admin.role);
-  }
-
+  // Final check
+  const check = await db.collection('users').findOne({ email: 'admin@tabsha.pk' });
+  console.log('=== FINAL STATE ===');
+  console.log('Email:', check.email);
+  console.log('Role:', check.role);
+  console.log('Active:', check.isActive);
+  console.log('===================');
+  
   process.exit(0);
 }
 
-fix().catch(e => { console.error('❌ Error:', e.message); process.exit(1); });
+fix().catch(e => { console.error('❌', e.message); process.exit(1); });

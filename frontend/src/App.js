@@ -3,14 +3,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store';
 
-// Layout
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-
-// Auth pages
 import { LoginPage, RegisterPage } from './pages/auth/AuthPages';
 
-// Shop pages - direct imports (no lazy, more reliable on Railway)
 import HomePage          from './pages/shop/HomePage';
 import ShopPage          from './pages/shop/ShopPage';
 import ProductDetailPage from './pages/shop/ProductDetailPage';
@@ -23,7 +19,6 @@ import MyOrdersPage      from './pages/shop/MyOrdersPage';
 import SizeGuidePage     from './pages/shop/SizeGuidePage';
 import NotFoundPage      from './pages/NotFoundPage';
 
-// Admin pages
 import AdminLayout       from './pages/admin/AdminLayout';
 import AdminDashboard    from './pages/admin/AdminDashboard';
 import AdminProducts     from './pages/admin/AdminProducts';
@@ -41,7 +36,9 @@ function ProtectedRoute({ children }) {
 function AdminRoute({ children }) {
   const { user } = useAuthStore();
   if (!user) return <Navigate to="/login" replace />;
-  if (user?.role !== 'admin') return <Navigate to="/" replace />;
+  // Check role from user object
+  const role = user?.role || user?.data?.role;
+  if (role !== 'admin') return <Navigate to="/" replace />;
   return children;
 }
 
@@ -67,17 +64,11 @@ export default function App() {
         position="top-right"
         toastOptions={{
           duration: 2800,
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '13px',
-            borderRadius: '4px',
-            boxShadow: '0 4px 20px rgba(0,0,0,.1)',
-          },
+          style: { fontFamily: 'Inter, sans-serif', fontSize: '13px', borderRadius: '4px' },
           success: { iconTheme: { primary: '#b8973e', secondary: '#fff' } },
         }}
       />
       <Routes>
-        {/* Shop */}
         <Route path="/"               element={<ShopLayout><HomePage /></ShopLayout>} />
         <Route path="/shop"           element={<ShopLayout><ShopPage /></ShopLayout>} />
         <Route path="/shop/:category" element={<ShopLayout><ShopPage /></ShopLayout>} />
@@ -85,18 +76,12 @@ export default function App() {
         <Route path="/cart"           element={<ShopLayout><CartPage /></ShopLayout>} />
         <Route path="/wishlist"       element={<ShopLayout><WishlistPage /></ShopLayout>} />
         <Route path="/size-guide"     element={<ShopLayout><SizeGuidePage /></ShopLayout>} />
-
-        {/* Protected */}
         <Route path="/checkout"       element={<ProtectedRoute><ShopLayout><CheckoutPage /></ShopLayout></ProtectedRoute>} />
         <Route path="/order-confirmation/:id" element={<ProtectedRoute><ShopLayout><OrderConfirmationPage /></ShopLayout></ProtectedRoute>} />
         <Route path="/profile"        element={<ProtectedRoute><ShopLayout><ProfilePage /></ShopLayout></ProtectedRoute>} />
         <Route path="/my-orders"      element={<ProtectedRoute><ShopLayout><MyOrdersPage /></ShopLayout></ProtectedRoute>} />
-
-        {/* Auth */}
-        <Route path="/login"    element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-
-        {/* Admin */}
+        <Route path="/login"          element={<LoginPage />} />
+        <Route path="/register"       element={<RegisterPage />} />
         <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
           <Route index               element={<AdminDashboard />} />
           <Route path="products"     element={<AdminProducts />} />
@@ -107,8 +92,6 @@ export default function App() {
           <Route path="orders/:id"   element={<AdminOrderDetail />} />
           <Route path="users"        element={<AdminUsers />} />
         </Route>
-
-        {/* 404 */}
         <Route path="*" element={<ShopLayout><NotFoundPage /></ShopLayout>} />
       </Routes>
     </BrowserRouter>

@@ -23,7 +23,6 @@ const adminOnly = (req, res, next) => {
   res.status(403).json({ message: 'Admin access required' });
 };
 
-// Now includes role in the token payload
 const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
