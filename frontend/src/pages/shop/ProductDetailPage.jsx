@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FiHeart, FiShoppingBag, FiTruck, FiRefreshCw, FiShield, FiStar, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiHeart, FiShoppingBag, FiTruck, FiRefreshCw, FiShield, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { getProductBySlug } from '../../utils/api';
 import { useCartStore, useWishlistStore } from '../../store';
 import toast from 'react-hot-toast';
@@ -17,7 +17,6 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState('');
   const [qty, setQty] = useState(1);
   const [tab, setTab] = useState('description');
-  const [related, setRelated] = useState([]);
 
   const addItem = useCartStore((s) => s.addItem);
   const { toggle, has } = useWishlistStore();

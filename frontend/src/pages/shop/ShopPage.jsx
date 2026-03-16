@@ -30,7 +30,6 @@ export default function ShopPage() {
 
   const search    = searchParams.get('search')  || '';
   const isNew     = searchParams.get('new')     === 'true';
-  const isSale    = searchParams.get('sale')    === 'true';
   const catParam  = searchParams.get('category') || '';
 
   const fetchProducts = useCallback(async () => {

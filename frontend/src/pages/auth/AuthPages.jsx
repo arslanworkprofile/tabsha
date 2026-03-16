@@ -78,7 +78,6 @@ export function LoginPage() {
 
 export function RegisterPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });
-  const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const { register } = useAuthStore();
   const navigate = useNavigate();
@@ -117,7 +116,7 @@ export function RegisterPage() {
             {[
               { label: 'Full Name', type: 'text', key: 'name', icon: FiUser, placeholder: 'Your full name' },
               { label: 'Email', type: 'email', key: 'email', icon: FiMail, placeholder: 'you@example.com' },
-              { label: 'Password', type: showPwd ? 'text' : 'password', key: 'password', icon: FiLock, placeholder: 'Min. 6 characters' },
+              { label: 'Password', type: 'password', key: 'password', icon: FiLock, placeholder: 'Min. 6 characters' },
               { label: 'Confirm Password', type: 'password', key: 'confirm', icon: FiLock, placeholder: 'Repeat password' },
             ].map(({ label, type, key, icon: Icon, placeholder }) => (
               <div className="form-group" key={key}>
