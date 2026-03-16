@@ -5,39 +5,50 @@ const User = require('./models/User');
 
 async function fix() {
   const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/tabsha';
-  console.log('Connecting to MongoDB...');
   await mongoose.connect(uri);
-  console.log('✅ Connected');
+  console.log('✅ Connected to MongoDB');
 
-  // Force set admin role
-  let user = await User.findOneAndUpdate(
+  // Force update admin role using $set to bypass any hooks
+  const result = await User.collection.updateOne(
     { email: 'admin@tabsha.pk' },
-    { $set: { role: 'admin', isActive: true } },
-    { new: true }
+    { $set: { role: 'admin', isActive: true } }
   );
 
-  if (!user) {
-    user = await User.create({
+  if (result.matchedCount === 0) {
+    // User doesn't exist - create with bcrypt manually
+    const bcrypt = require('bcryptjs');
+    const hash = await bcrypt.hash('admin123', 12);
+    await User.collection.insertOne({
       name: 'Tabsha Admin',
       email: 'admin@tabsha.pk',
-      password: 'admin123',
+      password: hash,
       role: 'admin',
       isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
     console.log('✅ Admin user CREATED');
   } else {
-    console.log('✅ Admin role FIXED');
+    console.log(`✅ Admin role FIXED (matched: ${result.matchedCount}, modified: ${result.modifiedCount})`);
   }
 
-  console.log(`Email: ${user.email}`);
-  console.log(`Role:  ${user.role}`);
-  console.log(`Active: ${user.isActive}`);
+  // Verify the fix
+  const admin = await User.collection.findOne({ email: 'admin@tabsha.pk' });
+  console.log('');
+  console.log('=== VERIFICATION ===');
+  console.log(`Email:  ${admin.email}`);
+  console.log(`Role:   ${admin.role}`);
+  console.log(`Active: ${admin.isActive}`);
+  console.log('');
 
-  const all = await User.find().select('email role');
-  console.log('\nAll users:');
-  all.forEach(u => console.log(` - ${u.email} [${u.role}]`));
+  if (admin.role === 'admin') {
+    console.log('🎉 SUCCESS! Login with:');
+    console.log('   admin@tabsha.pk / admin123');
+  } else {
+    console.log('❌ FAILED - role is still:', admin.role);
+  }
 
   process.exit(0);
 }
 
-fix().catch(e => { console.error('❌', e.message); process.exit(1); });
+fix().catch(e => { console.error('❌ Error:', e.message); process.exit(1); });

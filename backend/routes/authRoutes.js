@@ -7,11 +7,14 @@ const { generateToken, protect } = require('../middleware/auth');
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    if (!name || !email || !password) return res.status(400).json({ message: 'All fields required' });
+    if (!name || !email || !password)
+      return res.status(400).json({ message: 'All fields required' });
     const exists = await User.findOne({ email });
-    if (exists) return res.status(400).json({ message: 'Email already registered' });
-    const user = await User.create({ name, email, password });
-    res.status(201).json({ ...user.toJSON(), token: generateToken(user._id) });
+    if (exists)
+      return res.status(400).json({ message: 'Email already registered' });
+    const user = await User.create({ name, email, password, role: 'user' });
+    const userData = user.toJSON();
+    res.status(201).json({ ...userData, token: generateToken(user._id, user.role) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -21,12 +24,17 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user || !(await user.matchPassword(password))) {
+    // Always fetch fresh from DB with role
+    const user = await User.findOne({ email }).select('+role');
+    if (!user || !(await user.matchPassword(password)))
       return res.status(401).json({ message: 'Invalid email or password' });
-    }
-    if (!user.isActive) return res.status(401).json({ message: 'Account deactivated' });
-    res.json({ ...user.toJSON(), token: generateToken(user._id) });
+    if (!user.isActive)
+      return res.status(401).json({ message: 'Account deactivated' });
+
+    const userData = user.toJSON();
+    console.log(`Login: ${email} | role: ${user.role}`); // debug log
+
+    res.json({ ...userData, token: generateToken(user._id, user.role) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -47,7 +55,7 @@ router.put('/profile', protect, async (req, res) => {
     if (addresses) user.addresses = addresses;
     if (req.body.password) user.password = req.body.password;
     await user.save();
-    res.json({ ...user.toJSON(), token: generateToken(user._id) });
+    res.json({ ...user.toJSON(), token: generateToken(user._id, user.role) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
