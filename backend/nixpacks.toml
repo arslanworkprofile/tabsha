@@ -1,14 +1,8 @@
-[variables]
-CI = "false"
-
-[phases.setup]
-nixPkgs = ["nodejs_20"]
-
 [phases.install]
 cmds = ["npm install"]
 
 [phases.build]
-cmds = ["npm run build", "npm install -g serve"]
+cmds = []
 
 [start]
-cmd = "serve -s build -l 3000"
+cmd = "node server.js"
