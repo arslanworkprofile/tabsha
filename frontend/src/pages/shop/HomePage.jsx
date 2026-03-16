@@ -141,7 +141,7 @@ export default function HomePage() {
             <Link to="/shop" className="section-link">All Collections <FiArrowRight size={13} /></Link>
           </div>
           <div className="cats-grid">
-            {categories.slice(0, 6).map((cat, i) => (
+            {(Array.isArray(categories) ? categories : []).slice(0, 6).map((cat, i) => (
               <Link
                 key={cat._id}
                 to={`/shop/${cat.slug}`}

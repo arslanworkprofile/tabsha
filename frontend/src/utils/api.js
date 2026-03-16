@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: '/api' });
+// Use env variable on Railway, fall back to proxy for local dev
+const BASE_URL = process.env.REACT_APP_API_URL || '/api';
+
+const api = axios.create({ baseURL: BASE_URL });
 
 api.interceptors.request.use((cfg) => {
   try {
@@ -24,31 +27,31 @@ api.interceptors.response.use(
   }
 );
 
-export const getProducts   = (p) => api.get('/products', { params: p });
-export const getProduct    = (id) => api.get(`/products/${id}`);
+export const getProducts      = (p)    => api.get('/products', { params: p });
+export const getProduct       = (id)   => api.get(`/products/${id}`);
 export const getProductBySlug = (slug) => api.get(`/products/slug/${slug}`);
-export const createProduct = (d) => api.post('/products', d);
-export const updateProduct = (id, d) => api.put(`/products/${id}`, d);
-export const deleteProduct = (id) => api.delete(`/products/${id}`);
-export const addReview     = (id, d) => api.post(`/products/${id}/reviews`, d);
+export const createProduct    = (d)    => api.post('/products', d);
+export const updateProduct    = (id, d)=> api.put(`/products/${id}`, d);
+export const deleteProduct    = (id)   => api.delete(`/products/${id}`);
+export const addReview        = (id, d)=> api.post(`/products/${id}/reviews`, d);
 
-export const getCategories    = () => api.get('/categories');
-export const getAllCategories  = () => api.get('/categories/all');
-export const createCategory   = (d) => api.post('/categories', d);
-export const updateCategory   = (id, d) => api.put(`/categories/${id}`, d);
-export const deleteCategory   = (id) => api.delete(`/categories/${id}`);
+export const getCategories    = ()     => api.get('/categories');
+export const getAllCategories  = ()     => api.get('/categories/all');
+export const createCategory   = (d)    => api.post('/categories', d);
+export const updateCategory   = (id, d)=> api.put(`/categories/${id}`, d);
+export const deleteCategory   = (id)   => api.delete(`/categories/${id}`);
 
-export const createOrder       = (d) => api.post('/orders', d);
-export const getMyOrders       = () => api.get('/orders/my');
-export const getOrder          = (id) => api.get(`/orders/${id}`);
-export const getAllOrders       = (p) => api.get('/orders', { params: p });
-export const updateOrderStatus = (id, d) => api.put(`/orders/${id}/status`, d);
-export const deleteOrder       = (id) => api.delete(`/orders/${id}`);
-export const getOrderStats     = () => api.get('/orders/admin/stats');
+export const createOrder       = (d)    => api.post('/orders', d);
+export const getMyOrders       = ()     => api.get('/orders/my');
+export const getOrder          = (id)   => api.get(`/orders/${id}`);
+export const getAllOrders       = (p)    => api.get('/orders', { params: p });
+export const updateOrderStatus = (id, d)=> api.put(`/orders/${id}/status`, d);
+export const deleteOrder       = (id)   => api.delete(`/orders/${id}`);
+export const getOrderStats     = ()     => api.get('/orders/admin/stats');
 
-export const getUsers    = (p) => api.get('/users', { params: p });
-export const toggleUser  = (id) => api.put(`/users/${id}/toggle`);
-export const deleteUser  = (id) => api.delete(`/users/${id}`);
+export const getUsers   = (p)  => api.get('/users', { params: p });
+export const toggleUser = (id) => api.put(`/users/${id}/toggle`);
+export const deleteUser = (id) => api.delete(`/users/${id}`);
 
 export const uploadImage = (fd) =>
   api.post('/upload/image', fd, { headers: { 'Content-Type': 'multipart/form-data' } });

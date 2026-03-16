@@ -67,7 +67,7 @@ export const useCartStore = create(
 
       addItem: (product, qty = 1, size = '', color = '', colorCode = '') => {
         const key = `${product._id}-${size}-${color}`;
-        const items = get().items;
+        const items = Array.isArray(get().items) ? get().items : [];
         const existing = items.find(
           (i) => `${i._id}-${i.selectedSize}-${i.selectedColor}` === key
         );
@@ -91,7 +91,7 @@ export const useCartStore = create(
 
       removeItem: (key) =>
         set({
-          items: get().items.filter(
+          items: (Array.isArray(get().items) ? get().items : []).filter(
             (i) => `${i._id}-${i.selectedSize}-${i.selectedColor}` !== key
           ),
         }),
@@ -99,7 +99,7 @@ export const useCartStore = create(
       updateQty: (key, qty) => {
         if (qty < 1) return;
         set({
-          items: get().items.map((i) =>
+          items: (Array.isArray(get().items) ? get().items : []).map((i) =>
             `${i._id}-${i.selectedSize}-${i.selectedColor}` === key ? { ...i, qty } : i
           ),
         });
@@ -107,7 +107,15 @@ export const useCartStore = create(
 
       clearCart: () => set({ items: [] }),
     }),
-    { name: 'tabsha-cart' }
+    {
+      name: 'tabsha-cart',
+      // Sanitize old/corrupt persisted state
+      merge: (persistedState, currentState) => ({
+        ...currentState,
+        ...persistedState,
+        items: Array.isArray(persistedState?.items) ? persistedState.items : [],
+      }),
+    }
   )
 );
 
@@ -118,16 +126,24 @@ export const useWishlistStore = create(
       items: [],
 
       toggle: (product) => {
-        const exists = get().items.find((i) => i._id === product._id);
+        const items = Array.isArray(get().items) ? get().items : [];
+        const exists = items.find((i) => i._id === product._id);
         if (exists) {
-          set({ items: get().items.filter((i) => i._id !== product._id) });
+          set({ items: items.filter((i) => i._id !== product._id) });
         } else {
-          set({ items: [...get().items, product] });
+          set({ items: [...items, product] });
         }
       },
 
-      has: (id) => get().items.some((i) => i._id === id),
+      has: (id) => (Array.isArray(get().items) ? get().items : []).some((i) => i._id === id),
     }),
-    { name: 'tabsha-wishlist' }
+    {
+      name: 'tabsha-wishlist',
+      merge: (persistedState, currentState) => ({
+        ...currentState,
+        ...persistedState,
+        items: Array.isArray(persistedState?.items) ? persistedState.items : [],
+      }),
+    }
   )
 );
